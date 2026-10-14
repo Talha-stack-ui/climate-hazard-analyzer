@@ -10,7 +10,6 @@ services:
     buildCommand: pip install -r requirements.txt
     # One process with threads: the LocMem throttle counters are then shared by all requests.
     startCommand: python manage.py migrate --noinput && gunicorn config.wsgi --workers 1 --threads 8 --timeout 120 --bind 0.0.0.0:$PORT
-    healthCheckPath: /api/health/
     envVars:
       - key: PYTHON_VERSION
         value: 3.11.9
