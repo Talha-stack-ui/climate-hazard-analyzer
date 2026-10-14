@@ -12,7 +12,7 @@ render.yaml  one-click deploy of both to Render
 ```
 
 - How it is built, in plain Q&A form: [HOW_IT_WORKS.md](HOW_IT_WORKS.md)
-- Live app: _add URL after deploying_
+- Live app: https://climate-web.onrender.com (API: https://climate-api-qw15.onrender.com/api/health/). Free tier: the first request after a quiet period can take ~1 minute while the API wakes up.
 - Demo video: _optional_
 
 ## Setup
