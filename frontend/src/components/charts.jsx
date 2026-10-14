@@ -1,10 +1,12 @@
 import { useSyncExternalStore } from 'react'
 import {
-  BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineElement, PointElement, Tooltip,
+  BarController, BarElement, CategoryScale, Chart as ChartJS, Legend, LinearScale, LineController, LineElement,
+  PointElement, Tooltip,
 } from 'chart.js'
 import { Chart } from 'react-chartjs-2'
 
-ChartJS.register(BarElement, CategoryScale, LinearScale, LineElement, PointElement, Tooltip, Legend)
+// Mixed charts use the generic <Chart>, so the bar and line controllers must be registered explicitly.
+ChartJS.register(BarController, BarElement, CategoryScale, LinearScale, LineController, LineElement, PointElement, Tooltip, Legend)
 
 // Validated reference palette: series slots 1-2 plus ink/grid per mode.
 const PALETTE = {
