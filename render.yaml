@@ -1,0 +1,40 @@
+# Render blueprint: API (Django + gunicorn) and frontend (static Vite build).
+# Storage is SQLite. On the free plan the disk is wiped on every deploy/restart, so the
+# cache starts empty each time; attach a Render disk (paid) and set SQLITE_PATH to keep it.
+services:
+  - type: web
+    name: climate-api
+    runtime: python
+    rootDir: backend
+    plan: free
+    buildCommand: pip install -r requirements.txt
+    # One process with threads: the LocMem throttle counters are then shared by all requests.
+    startCommand: python manage.py migrate --noinput && gunicorn config.wsgi --workers 1 --threads 8 --timeout 120 --bind 0.0.0.0:$PORT
+    healthCheckPath: /api/health/
+    envVars:
+      - key: PYTHON_VERSION
+        value: 3.11.9
+      - key: DJANGO_SECRET_KEY
+        generateValue: true
+      - key: DJANGO_DEBUG
+        value: "False"
+      - key: DJANGO_ALLOWED_HOSTS
+        value: .onrender.com
+      - key: NUM_PROXIES
+        value: "1"
+      # - key: SQLITE_PATH          # with a persistent disk mounted at /var/data
+      #   value: /var/data/climate.sqlite3
+      - key: CORS_ALLOWED_ORIGINS
+        sync: false   # e.g. https://climate-web.onrender.com
+      - key: GEOCODER_USER_AGENT
+        sync: false   # e.g. climate-hazard-analyzer/1.0 (you@example.com)
+
+  - type: web
+    name: climate-web
+    runtime: static
+    rootDir: frontend
+    buildCommand: npm ci && npm run build
+    staticPublishPath: dist
+    envVars:
+      - key: VITE_API_URL
+        sync: false   # e.g. https://climate-api.onrender.com/api
